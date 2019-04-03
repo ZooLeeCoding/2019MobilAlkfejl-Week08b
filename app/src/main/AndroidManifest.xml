@@ -12,7 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BookActivity"></activity>
+        <receiver
+            android:name=".MyAsyncReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".BookActivity" />
         <activity android:name=".MessageActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
