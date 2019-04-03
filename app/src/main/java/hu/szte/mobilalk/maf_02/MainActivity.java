@@ -1,14 +1,19 @@
 package hu.szte.mobilalk.maf_02;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,12 +65,13 @@ public class MainActivity extends AppCompatActivity
                     this);
         }
 
-        /*this.br = new MyReceiver();
+        this.br = new MyReceiver();
         IntentFilter filter = new IntentFilter(Intent.ACTION_POWER_CONNECTED);
-        filter.addAction(Intent.ACTION_POWER_DISCONNECTED);*/
-        this.br = new MyAsyncReceiver();
+        filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        filter.addAction(broadcastIntent);
+        /*this.br = new MyAsyncReceiver();
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);*/
         this.registerReceiver(br, filter);
     }
 
@@ -82,9 +88,9 @@ public class MainActivity extends AppCompatActivity
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Toast toast = Toast.makeText(getApplicationContext(), item.getTitle(),
+        /*Toast toast = Toast.makeText(getApplicationContext(), item.getTitle(),
                 Toast.LENGTH_SHORT);
-        toast.show();
+        toast.show();*/
 
         if(id == R.id.item_async) {
             //new SleeperTask(this.helloView).execute();
@@ -93,9 +99,49 @@ public class MainActivity extends AppCompatActivity
         } else if(id == R.id.item_book){
             Intent intent = new Intent(this, BookActivity.class);
             startActivityForResult(intent, TEXT_REQUEST);
+        } else if(id == R.id.item_broadcast) {
+            startBroadcasting();
+        } else if(id == R.id.item_notify) {
+            notifyUser();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void notifyUser() {
+
+        CharSequence channelName = null;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channelName = "myNotfifChannel";
+            String description = "this is our channel!";
+            int importance = NotificationManager.IMPORTANCE_MIN;
+            NotificationChannel channel =
+                    new NotificationChannel(channelName.toString(), channelName, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this,
+                        channelName != null ? channelName.toString() : null)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("MAF_02")
+                .setContentText(this.helloView.getText())
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        NotificationManagerCompat notifcationManager = NotificationManagerCompat.from(this);
+        notifcationManager.notify(0, builder.build());
+    }
+
+    public void startBroadcasting() {
+        Intent intent = new Intent();
+        intent.setAction(broadcastIntent);
+        sendBroadcast(intent);
+        //sendOrderedBroadcast(intent);
+        //LocalBroadcastManager.sendBroadcast(intent);
     }
 
     @Override

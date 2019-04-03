@@ -8,6 +8,9 @@
         android:id="@+id/item_book"
         android:title="BookSearch" />
     <item
-        android:id="@+id/item_2"
-        android:title="Item" />
+        android:id="@+id/item_broadcast"
+        android:title="Start Broadcast" />
+    <item
+        android:id="@+id/item_notify"
+        android:title="Notify" />
 </menu>
