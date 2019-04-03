@@ -13,6 +13,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.telecom.ConnectionService;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
     implements LoaderManager.LoaderCallbacks<String> {
+
+    private static String broadcastIntent = "hu.szte.mobilalk.maf_02.CUSTOM_INTENT";
 
     private int counter;
     private TextView counterView;
@@ -57,9 +60,12 @@ public class MainActivity extends AppCompatActivity
                     this);
         }
 
-        this.br = new MyReceiver();
+        /*this.br = new MyReceiver();
         IntentFilter filter = new IntentFilter(Intent.ACTION_POWER_CONNECTED);
-        filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        filter.addAction(Intent.ACTION_POWER_DISCONNECTED);*/
+        this.br = new MyAsyncReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
         this.registerReceiver(br, filter);
     }
 
